@@ -3,6 +3,12 @@
 
 #include "cache_list.h"
 
+extern const struct cache_node error_node = { .key = { .fd = -1 } };
+
+size_t min(size_t a, size_t b) {
+    return (a <= b) ? a : b;
+}
+
 struct cache_node* cache_node_create(int fd, off_t offset, void* data, size_t count) {
     struct cache_node* node = malloc(sizeof(struct cache_node));
     if (node == NULL) {
@@ -15,13 +21,13 @@ struct cache_node* cache_node_create(int fd, off_t offset, void* data, size_t co
     node->sync = false;
 
     if (data != NULL) {
-        node->data = malloc(count);
+        node->data = malloc(min(count, CACHE_NODE_DATA_CAP));
         if (node->data == NULL) {
             free(node);
             return NULL;
         }
 
-        memcpy(node->data, data, count);
+        memcpy(node->data, data, min(count, CACHE_NODE_DATA_CAP));
     } else {
         node->data = NULL;
     }
