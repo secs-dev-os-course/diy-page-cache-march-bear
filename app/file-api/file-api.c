@@ -1,12 +1,11 @@
 #define _GNU_SOURCE
 
-#include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 
 #include "file-api.h"
-#include "cache.h"
+#include "cache/cache.h"
 
 struct cache_list cache = {
     .capacity = 256, 
@@ -34,7 +33,6 @@ int cache_node_fsync(struct cache_node* node) {
     );
 
     if (res == node->size) {
-        printf("SYNCHED cache length: %zu\n", cache.length);
         node->sync = true;
         return 0;
     }
@@ -54,7 +52,6 @@ int cache_list_fsync_and_clear(struct cache_list* list, int fd) {
     struct cache_node* curr = list->first;
     
     while (curr != NULL) {
-        printf("fd %d; offset %zd\n", curr->key.fd, curr->key.offset);
         struct cache_node* next = curr->next;
         if (curr->key.fd == fd) {
             cache_node_free(curr);
@@ -190,7 +187,6 @@ ssize_t lab2_write(int fd, const void* buf, size_t count) {
     int puted = cache_put_buf(&cache, fd, off, true, buf, count);
 
     if (puted != 0) {
-        printf("here\n");
         return -1;
     }
 
@@ -198,7 +194,6 @@ ssize_t lab2_write(int fd, const void* buf, size_t count) {
         return count;
     }
 
-    printf("here2\n");
     return -1;
 }
 

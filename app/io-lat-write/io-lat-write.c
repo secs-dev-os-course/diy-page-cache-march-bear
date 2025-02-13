@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "../file-api.h"
+#include "file-api.h"
 
 static char* alloc_buf(size_t buf_size) {
   char* buf = malloc(buf_size * sizeof(char));
@@ -55,8 +55,7 @@ int do_io_lat_write(long rep, char* filename) {
     print_runtime_in_format(&stop, &start);
   }
 
-  printf("CLOSED %d\n", lab2_close(fd));
-  printf("that's all\n");
+  lab2_close(fd);
   free(buf);
 
   return 0;
