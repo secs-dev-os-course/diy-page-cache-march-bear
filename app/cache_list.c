@@ -3,31 +3,41 @@
 
 #include "cache_list.h"
 
-extern const struct cache_node error_node = { .key = { .fd = -1 } };
+const struct cache_node error_node = { .key = { .fd = -1 } };
 
 size_t min(size_t a, size_t b) {
     return (a <= b) ? a : b;
 }
 
-struct cache_node* cache_node_create(int fd, off_t offset, void* data, size_t count) {
+size_t max(size_t a, size_t b) {
+    return (a >= b) ? a : b;
+}
+
+struct cache_node* cache_node_create(page_key key, bool sync, off_t ioff, void* data, size_t count) {
     struct cache_node* node = malloc(sizeof(struct cache_node));
     if (node == NULL) {
         return NULL;
     }
 
     node->next = NULL;
-    node->key = (page_key) { .fd = fd, .offset = offset };
+    node->key = key;
     node->chance = false;
-    node->sync = false;
+    node->sync = sync;
+    node->ioff = ioff;
+    node->size = count;
 
     if (data != NULL) {
-        node->data = malloc(min(count, CACHE_NODE_DATA_CAP));
+        if (count + ioff > CACHE_NODE_DATA_CAP) {
+            free(node);
+            return NULL;
+        }
+        node->data = malloc(count + ioff);
         if (node->data == NULL) {
             free(node);
             return NULL;
         }
 
-        memcpy(node->data, data, min(count, CACHE_NODE_DATA_CAP));
+        memcpy((node->data + ioff), data, count);
     } else {
         node->data = NULL;
     }
@@ -47,22 +57,22 @@ void cache_node_free(struct cache_node* node) {
     free(node);
 }
 
-bool cache_node_is(struct cache_node* node, int fd, off_t offset) {
+bool cache_node_is(struct cache_node* node, page_key key) {
     if (node == NULL) {
         return false;
     }
 
-    return node->key.fd == fd && node->key.offset == offset;
+    return node->key.fd == key.fd && node->key.offset == key.offset;
 }
 
 struct cache_node* cache_list_add_back(
-    struct cache_list* list, int fd, off_t offset, void* data, size_t count
+    struct cache_list* list, page_key key, bool sync, off_t ioff, void* data, size_t count
 ) {
     if (list == NULL) {
         return NULL;
     }
 
-    struct cache_node* node = cache_node_create(fd, offset, data, count);
+    struct cache_node* node = cache_node_create(key, sync, ioff, data, count);
     if (node == NULL) {
         return NULL;
     }
@@ -73,6 +83,9 @@ struct cache_node* cache_list_add_back(
     } else if (list->first == list->last) {
         list->first->next = node;
         list->last = node;
+    } else {
+        list->last->next = node;
+        list->last = list->last->next;
     }
 
     return node;
@@ -93,6 +106,9 @@ struct cache_node* cache_list_remove_oldest(struct cache_list* list) {
         } else {
             if (curr == list->first) {
                 list->first = list->first->next;
+                if (curr == list->last) {
+                    list->last = NULL;
+                }
             } else if (curr == list->last) {
                 list->last = prev;
                 list->last->next = NULL;
@@ -103,6 +119,7 @@ struct cache_node* cache_list_remove_oldest(struct cache_list* list) {
         }
     }
 
+    list->length--;
     return curr;
 }
 
