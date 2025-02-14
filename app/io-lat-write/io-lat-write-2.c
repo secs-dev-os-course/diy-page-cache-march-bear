@@ -1,14 +1,13 @@
 #include "io-lat-write.h"
 
-#define _GNU_SOURCE
-
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <fcntl.h>
+
+#include "file-api.h"
 
 static char* alloc_buf(size_t buf_size) {
   char* buf = malloc(buf_size * sizeof(char));
@@ -31,7 +30,7 @@ static void print_runtime_in_format(struct timeval const* stop, struct timeval c
 }
 
 int do_io_lat_write(long rep, char* filename) {
-  int fd = open(filename, O_CREAT | O_DIRECT | O_SYNC | O_RDWR, S_IRWXU);
+  int fd = lab2_open(filename);
 
   if (fd == -1) {
     fprintf(stderr, "Cannor open file %s", filename);
@@ -44,19 +43,19 @@ int do_io_lat_write(long rep, char* filename) {
     struct timeval stop, start;
 
     gettimeofday(&start, NULL);
-    size_t writed = write(fd, buf, BLOCK_SIZE);
+    size_t writed = lab2_write(fd, buf, BLOCK_SIZE);
     gettimeofday(&stop, NULL);
 
     if (writed != BLOCK_SIZE) {
       fprintf(stderr, "Error during writing to the file");
-      close(fd);
+      lab2_close(fd);
       return IEXIT_CODE_WRITING_ERROR;
     }
 
     print_runtime_in_format(&stop, &start);
   }
 
-  close(fd);
+  lab2_close(fd);
   free(buf);
 
   return 0;
