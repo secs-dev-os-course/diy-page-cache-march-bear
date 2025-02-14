@@ -24,7 +24,7 @@ struct cache_node {
     void* data;
 };
 
-extern const struct cache_node error_node;
+extern struct cache_node error_node;
 
 struct cache_list {
     size_t capacity;

@@ -3,7 +3,7 @@
 
 #include "cache_list.h"
 
-const struct cache_node error_node = { .key = { .fd = -1 } };
+struct cache_node error_node = { .key = { .fd = -1 } };
 
 size_t min(size_t a, size_t b) {
     return (a <= b) ? a : b;

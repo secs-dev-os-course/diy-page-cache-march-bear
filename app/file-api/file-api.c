@@ -181,7 +181,7 @@ ssize_t lab2_read(int fd, void* buf, size_t count) {
 }
 
 
-ssize_t lab2_write(int fd, const void* buf, size_t count) {
+ssize_t lab2_write(int fd, void* buf, size_t count) {
     size_t off = lseek(fd, 0, SEEK_CUR);
 
     int puted = cache_put_buf(&cache, fd, off, true, buf, count);
