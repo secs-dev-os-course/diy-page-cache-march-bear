@@ -15,10 +15,18 @@ add_library(file-api SHARED
         file-api/file-api.h
 )
 
-add_executable(io-lat-write-2
+add_executable(io-lat-write
         io-lat-write/str-tools/str-tools.c
         io-lat-write/str-tools/str-tools.h
         io-lat-write/io-lat-write.c
+        io-lat-write/io-lat-write.h
+        io-lat-write/main.c
+)
+
+add_executable(io-lat-write-2
+        io-lat-write/str-tools/str-tools.c
+        io-lat-write/str-tools/str-tools.h
+        io-lat-write/io-lat-write-2.c
         io-lat-write/io-lat-write.h
         io-lat-write/main.c
 )
