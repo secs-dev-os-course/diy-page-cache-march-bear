@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
-#define CACHE_NODE_DATA_CAP 4 * 1024
+#define CACHE_NODE_DATA_CAP (4 * 1024)
 
 /*
     Структура cache_list, фактическое представление кэша

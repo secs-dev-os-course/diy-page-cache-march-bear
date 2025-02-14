@@ -66,6 +66,8 @@ int cache_update(
 
             return CACHE_NO_ERROR;
         }
+
+        curr = curr->next;
     }
 
     return CACHE_ERROR_NO_BLOCK;
