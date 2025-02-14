@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "str-tools/str-tools.h"
 #include "io-lat-write.h"
+#include "str-tools/str-tools.h"
 
 int main(int argc, char* argv[]) {
   long rep;

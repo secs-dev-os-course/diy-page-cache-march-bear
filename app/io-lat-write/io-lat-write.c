@@ -2,13 +2,13 @@
 
 #define _GNU_SOURCE
 
+#include <fcntl.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 static char* alloc_buf(size_t buf_size) {
   char* buf = malloc(buf_size * sizeof(char));

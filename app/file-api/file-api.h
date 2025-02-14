@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-int lab2_open(const char *path);
+int lab2_open(const char* path);
 int lab2_close(int fd);
 ssize_t lab2_read(int fd, void* buf, size_t count);
 ssize_t lab2_write(int fd, void* buf, size_t count);

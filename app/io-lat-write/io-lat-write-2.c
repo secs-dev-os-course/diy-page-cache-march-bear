@@ -1,5 +1,3 @@
-#include "io-lat-write.h"
-
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +6,7 @@
 #include <unistd.h>
 
 #include "file-api.h"
+#include "io-lat-write.h"
 
 static char* alloc_buf(size_t buf_size) {
   char* buf = malloc(buf_size * sizeof(char));

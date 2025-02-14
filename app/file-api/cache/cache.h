@@ -1,7 +1,7 @@
 #pragma once
 
-#include <sys/types.h>
 #include <stdbool.h>
+#include <sys/types.h>
 
 #include "cache_list/cache_list.h"
 
